@@ -3,6 +3,7 @@ import {tryCatch} from "../../../middleware/tryCatch.js"
 import {isEmailValid, validatePassword} from "../../../utils/validations.js"
 import { ERROR } from "../../../utils/requestManager.js";
 import {db_createUser} from "../../../db/db_users.js"
+import { hashPassword } from "../../../utils/crypto.js";
 
 const router = Router()
 export default router
@@ -27,8 +28,9 @@ router.post("/register", tryCatch(async (req,res)=>{
     return res.sendBad(ERROR.PASSWORD_FORMAT,errors)
   }
 
+  const pswdHash = hashPassword(password);
 
-  const newUser = await db_createUser(username,email,password,true)
+  const newUser = await db_createUser(username,email,pswdHash,true)
   if(!newUser){
     return res.sendBad(ERROR.GENERAL)
   }

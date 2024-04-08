@@ -20,4 +20,32 @@ export function jwtSign(data){
 
 
 
+export async function jwtVerify(req, res, next) {
+  try {
+    let token =
+      req.body.token || req.query.token || req.headers["authorization"] || req.headers["Authorization"];
+
+    if (!token) {
+      return res.status(403).json({
+        success: false,
+        msg: "A token is required for authentication",
+      });
+    }
+
+    if(token.startsWith("Bearer ")){
+      token = token.replace("Bearer ","")
+    }
+
+    const user = await db_getUserByJWT(token);
+
+    if (!user) {
+      return res.status(401).json({ success: false, msg: "Invalid Token" });
+    }
+
+    req.user = user;
+    return next();
+  } catch {
+    return res.status(401).json({ success: false, msg: "Invalid Token" });
+  }
+}
 

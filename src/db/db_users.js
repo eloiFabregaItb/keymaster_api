@@ -47,10 +47,10 @@ async function db_getUserByID(id) {
 }
 
 
-export async function db_getUserByUsername(username) {
-  if (!username) return;
+export async function db_getUserByUsername(usernameOrEmail) {
+  if (!usernameOrEmail) return;
 
-  const [rows] = await db.query("SELECT * FROM User WHERE username = ?", [username]);
+  const [rows] = await db.query("SELECT * FROM User WHERE username = ? OR email = ?", [usernameOrEmail,usernameOrEmail]);
 
   if (rows && rows[0]) {
     return new User(rows[0]);
