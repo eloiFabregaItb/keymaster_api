@@ -1,10 +1,12 @@
 import express from "express";
 
-import { db_getUserByUsername } from "../../../db/db_users.js";
+import { db_getUserByUsername, db_updateUserPassword } from "../../../db/db_users.js";
 import { tryCatch } from "../../../middleware/tryCatch.js";
 import { obfuscateEmail } from "../../../utils/obfuscate.js";
 import CodeVerificationList from "../../../logic/CodeVerificationList.js";
 import { CustomError, ERROR } from "../../../utils/requestManager.js";
+import { validatePassword } from "../../../utils/validations.js";
+import { hashPassword } from "../../../utils/crypto.js";
 
 const router = express.Router();
 export default router;
@@ -26,15 +28,11 @@ router.post("/forgotten", tryCatch(async (req, res) => {
 
   //si no hay resultados
   if (!user) {
-    // No user found, send a response with success:false
-    return res.json({
-      success: false,
-      msg: "User not found",
-    });
+    throw new CustomError(ERROR.NOT_FOUND, "User not found")
   }
 
   const emailObfuscated = obfuscateEmail(user.email)
-  const {code} = codeWaiting.push(user.email,login)
+  const {code} = codeWaiting.push(user)
 
   console.log("TODO, SEND EMAIL TO",user.email,"with code", code )
 
@@ -47,7 +45,13 @@ router.post("/checkforgoten", tryCatch(async (req,res)=>{
 
   const {login,code} = req.requireBodyData(["login","code"])
 
-  const keyCode = codeWaiting.check(code,undefined,login)
+  const user = await db_getUserByUsername(login);
+
+  if (!user) {
+    throw new CustomError(ERROR.NOT_FOUND, "User not found")
+  }
+
+  const keyCode = codeWaiting.check(code,user)
   
   if(keyCode){
     return "true"
@@ -57,7 +61,34 @@ router.post("/checkforgoten", tryCatch(async (req,res)=>{
 }))
 
 
+router.post("/changepassword",tryCatch(async(req,res)=>{
+  const {login,code,password} = req.requireBodyData(["login","code","password"])
 
+  const user = await db_getUserByUsername(login);
+
+  if (!user) {
+    throw new CustomError(ERROR.NOT_FOUND, "User not found")
+  }
+
+  const keyCode = codeWaiting.check(code,user)
+  
+  if(!keyCode){
+    throw new CustomError(ERROR.UNEXISTENT, "no code matching")
+  }
+
+  const {valid,errors} = validatePassword(password)
+
+  if(!valid){
+    throw new CustomError(ERROR.PASSWORD_FORMAT,errors)
+  }
+
+  const pswdHash = hashPassword(password);
+
+  console.log(keyCode,login,password,pswdHash)
+
+  await db_updateUserPassword(user,pswdHash)
+
+}))
 
 
 

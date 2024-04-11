@@ -90,37 +90,42 @@ export async function db_deleteUser(id) {
  * @param {User} user Objeto Usuario
  * @param {string[]} fields Array de strings que definen los campos a actualizar
  */
-export async function db_updateUserFields(user,fields){
+// export async function db_updateUserFields(user,fields){
 
-  const allFields = {
-    username:user.username,
-    password:user.password,
-    profileImg:user.profileImg,
-  }
+//   const allFields = {
+//     username:user.username,
+//     password:user.password,
+//     profileImg:user.profileImg,
+//   }
 
-  const syntax = `UPDATE User SET 
-  ${fields.map(x=>allFields[x] ? x + " = ? ":"").join(",")}
-  WHERE usr_id = ?`
+//   const syntax = `UPDATE User SET 
+//   ${fields.map(x=>allFields[x] ? x + " = ? ":"").join(",")}
+//   WHERE usr_id = ?`
   
-  const values = fields.flatMap(x=>allFields[x]?allFields[x]:[])
-  values.push(user.id)
-  // console.log(syntax,values)
+//   const values = fields.flatMap(x=>allFields[x]?allFields[x]:[])
+//   values.push(user.id)
+//   // console.log(syntax,values)
   
-  const [rows] = await db.query(syntax,values)
+//   const [rows] = await db.query(syntax,values)
 
-  if(rows.affectedRows == 0){
-    throw new CustomError(ERROR.UNEXISTENT,"No existe el id")
-  } 
+//   if(rows.affectedRows == 0){
+//     throw new CustomError(ERROR.UNEXISTENT,"No existe el id")
+//   } 
+// }
+
+export async function db_updateUserPassword(user,newPassword){
+  const sql = `UPDATE User SET password = ? WHERE id = ?`
+  const [data] = await db.query(sql,[newPassword,user.id])
+  console.log(data)
+  
 }
 
 
 
+// export async function db_getUsersList(minrange = 1){
+//   const sql = `SELECT * FROM users WHERE usr_permisos >= ?`
 
+//   const [rows] = await db.query(sql,minrange)
 
-export async function db_getUsersList(minrange = 1){
-  const sql = `SELECT * FROM users WHERE usr_permisos >= ?`
-
-  const [rows] = await db.query(sql,minrange)
-
-  return rows.map((row)=>new User(row))
-}
+//   return rows.map((row)=>new User(row))
+// }

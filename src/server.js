@@ -1,6 +1,7 @@
 //modules
 import express from "express"
-import bodyParser from 'body-parser'
+
+import "./testing.js"
 
 //routes
 import router_auth from "./routes/auth/auth.js"
