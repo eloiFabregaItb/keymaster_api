@@ -1,3 +1,4 @@
+import { BACKEND_URL } from "../constants.js"
 import { jwtSign } from "../utils/jwt.js"
 
 
@@ -30,7 +31,7 @@ export class User {
       id:this.id,
       email:this.email,
       username:this.username,
-      profileImg:this.profileImg,
+      profileImg:this.profileImg ? `${BACKEND_URL}/public/usrPic/${this.profileImg}`:null,
       emailVerified:this.emailVerified
     }
 

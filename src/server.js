@@ -5,6 +5,7 @@ import "./testing.js"
 
 //routes
 import router_auth from "./routes/auth/auth.js"
+import router_user from "./routes/user/user.js"
 
 
 //middleware
@@ -33,6 +34,7 @@ app.use(requestManager())
 
 //ENDPOINTS
 app.use("/auth",router_auth)
+app.use("/user",router_user)
 
 
 

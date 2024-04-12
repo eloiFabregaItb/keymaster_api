@@ -74,7 +74,7 @@ export async function db_createUser(username, email, password, returnUser=false)
 }
 
 export async function db_deleteUser(id) {
-  const [rows] = await db.query("DELETE FROM Users WHERE id = ?", [id]);
+  const [rows] = await db.query("DELETE FROM User WHERE id = ?", [id]);
   
   if(rows.affectedRows == 0){
     throw new CustomError(ERROR.UNEXISTENT,"No existe el id")
@@ -124,6 +124,14 @@ export async function db_updateUserEmailValidated(user){
   const [data] = await db.query(sql,[user.id])
   return data
 }
+
+export async function db_updateUserImg(user, newImg){
+  const sql = `UPDATE User SET profileImg = ? WHERE id = ?`
+  const [data] = await db.query(sql,[newImg, user.id])
+  return data
+}
+
+
 
 
 

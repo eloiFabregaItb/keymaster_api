@@ -9,7 +9,7 @@ import { ERROR } from "../utils/requestManager.js";
 
 
 
-const tempFolder = path.join('temp')
+const tempFolder = path.join('tmp')
 const publicFolder = path.join('public')
 
 // await fs.mkdir(tempFolder, { recursive: true }).catch((err) => {

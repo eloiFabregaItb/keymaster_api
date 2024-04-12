@@ -9,7 +9,7 @@ export const ERROR={
   },
   ALREADY_DONE:{
     msg:"Esta acción ya se ha realizado",
-    code:200,
+    code:400,
     error:"ALREADY_DONE"
   },
   DATA_CORRUPT:{
