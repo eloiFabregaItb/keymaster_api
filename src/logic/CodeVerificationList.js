@@ -1,3 +1,4 @@
+import { EMAIL_CODE_EXPIRATION } from "../constants.js"
 import { generateAlphaNumericNonRepeated } from "../utils/crypto.js"
 
 export default class CodeVerificationList{
@@ -7,6 +8,7 @@ export default class CodeVerificationList{
 
 
   push(user){
+    this.sanitize()
     const check = this.list.find(x=>x.id === user.id)
     if(check){
       check.timestamp = new Date().getTime()
@@ -28,12 +30,16 @@ export default class CodeVerificationList{
   }
 
   check(code,user){
+    this.sanitize()
     const found = this.list.find(x=>x.code === code && x.user.id === user.id)
     return found  
   }
 
   sanitize(){
-    //clear old codes
+    const now = new Date().getTime();
+    this.list = this.list.filter(
+      (x) => now - x.timestamp <= EMAIL_CODE_EXPIRATION * 60000
+    );
   }
 }
 

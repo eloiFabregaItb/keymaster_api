@@ -9,7 +9,8 @@ export class User {
     username,
     profileImg,
     createdAt,
-    updatedAt
+    updatedAt,
+    emailVerified,
   }) {
     this.id = id
     this.password = password //private
@@ -18,6 +19,7 @@ export class User {
     this.profileImg = profileImg
     this.createdAt = createdAt //private
     this.updatedAt = updatedAt //private
+    this.emailVerified =Boolean(emailVerified)
   }
 
 
@@ -29,6 +31,7 @@ export class User {
       email:this.email,
       username:this.username,
       profileImg:this.profileImg,
+      emailVerified:this.emailVerified
     }
 
     if(this.jwt){

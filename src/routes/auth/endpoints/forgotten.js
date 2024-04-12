@@ -7,6 +7,7 @@ import CodeVerificationList from "../../../logic/CodeVerificationList.js";
 import { CustomError, ERROR } from "../../../utils/requestManager.js";
 import { validatePassword } from "../../../utils/validations.js";
 import { hashPassword } from "../../../utils/crypto.js";
+import { sendEmailRecoverPassword } from "../../../mailer/emailRecoverPassword.js";
 
 const router = express.Router();
 export default router;
@@ -22,8 +23,6 @@ router.post("/forgotten", tryCatch(async (req, res) => {
   //comprueba que se han recibido todos los datos requeridos
   const {login} = req.requireBodyData(["login"]) //login puede ser username o correo
 
-  console.log("FORGOTTEN",login);
-
   const user = await db_getUserByUsername(login);
 
   //si no hay resultados
@@ -34,14 +33,14 @@ router.post("/forgotten", tryCatch(async (req, res) => {
   const emailObfuscated = obfuscateEmail(user.email)
   const {code} = codeWaiting.push(user)
 
-  console.log("TODO, SEND EMAIL TO",user.email,"with code", code )
+  await sendEmailRecoverPassword(user.email,code)
 
   //retornar un success
-  return res.send({email: emailObfuscated})
+  return {email:emailObfuscated}
 }));
 
 
-router.post("/checkforgoten", tryCatch(async (req,res)=>{
+router.post("/checkforgotten", tryCatch(async (req,res)=>{
 
   const {login,code} = req.requireBodyData(["login","code"])
 
@@ -84,9 +83,12 @@ router.post("/changepassword",tryCatch(async(req,res)=>{
 
   const pswdHash = hashPassword(password);
 
-  console.log(keyCode,login,password,pswdHash)
+  const data = await db_updateUserPassword(user,pswdHash)
+  if(data.affectedRows > 0){
+    return true
+  }
 
-  await db_updateUserPassword(user,pswdHash)
+  return false
 
 }))
 

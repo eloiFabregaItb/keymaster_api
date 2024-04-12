@@ -64,9 +64,9 @@ export async function db_createUser(username, email, password, returnUser=false)
     "INSERT INTO User (password,email,username) VALUES (?,?,?)",
     [password,email,username]
   );
-
+ 
   if (returnUser) {
-    const [insertedUser] = await db.query("SELECT * FROM User WHERE usr_name = ?", [username]);
+    const [insertedUser] = await db.query("SELECT * FROM User WHERE username = ?", [username]);
     return new User(insertedUser[0])
   }else {
     return data
@@ -116,8 +116,13 @@ export async function db_deleteUser(id) {
 export async function db_updateUserPassword(user,newPassword){
   const sql = `UPDATE User SET password = ? WHERE id = ?`
   const [data] = await db.query(sql,[newPassword,user.id])
-  console.log(data)
-  
+  return data
+}
+
+export async function db_updateUserEmailValidated(user){
+  const sql = `UPDATE User SET emailVerified = 1 WHERE id = ?`
+  const [data] = await db.query(sql,[user.id])
+  return data
 }
 
 

@@ -7,6 +7,11 @@ export const ERROR={
     code:400,
     error:"MISSING_DATA"
   },
+  ALREADY_DONE:{
+    msg:"Esta acción ya se ha realizado",
+    code:200,
+    error:"ALREADY_DONE"
+  },
   DATA_CORRUPT:{
     msg:"Data is corrupt",
     code:400,
