@@ -2,6 +2,7 @@
 import express from "express"
 
 import "./testing.js"
+import {sanitizeUsrPic} from "./utils/sanitize.js"
 
 //routes
 import router_auth from "./routes/auth/auth.js"
@@ -20,7 +21,7 @@ const PORT = process.env.PORT || 3000
 const app = express()
 
 
-
+sanitizeUsrPic()
 
 
 //MIDDLEWARE

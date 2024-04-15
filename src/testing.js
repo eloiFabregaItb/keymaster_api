@@ -4,8 +4,8 @@ import { sendEmail } from "./mailer/mailer.js";
 
 
 
-// const [users] = await db.query("SELECT * FROM User")
-// console.log(users)
+const [users] = await db.query("SELECT * FROM User")
+console.log(users)
 
 
 
