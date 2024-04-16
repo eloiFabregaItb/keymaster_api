@@ -221,7 +221,13 @@ function logicStringFromLogicArray(logicArray){
  *   // Requires either 'username' OR 'email' in the request body.
  */
 function requireBodyData(req, res, logic, firstLevelOr = false) {
-  const body = req.body;
+
+  const bodyData = req.body;
+  const urlParams = req.query;
+  
+  // Combine body JSON and URL params
+  const body = { ...bodyData, ...urlParams };
+
 
   function checkKeys(key,container) {
     const bodyKeys = Object.keys(container)

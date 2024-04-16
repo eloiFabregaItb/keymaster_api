@@ -1,4 +1,3 @@
-console.log("SANITIZE")
 
 import fs from "fs"
 import db from "../db/db.js"

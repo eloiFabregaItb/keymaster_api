@@ -29,6 +29,8 @@ router.post("/login", tryCatch(async (req, res) => {
 
   const user = await db_getUserByPassword(login, pswdHash);
 
+  await user.getNotifications()
+
   //si no hay resultados
   if (!user) {
     // No user found, send a response with success:false

@@ -4,6 +4,8 @@ export default router
 
 import edit_router from "./endpoints/delete.js"
 import editImg_router from "./endpoints/editimg.js"
+import follow_router from "./endpoints/follow.js"
 
-router.use("",editImg_router)
 router.use("",edit_router)
+router.use("",editImg_router)
+router.use("",follow_router)

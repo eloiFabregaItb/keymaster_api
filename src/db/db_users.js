@@ -24,13 +24,17 @@ export async function db_getUserByPassword(usernameOrEmail, password) {
   );
 
   if (rows && rows[0]) {
-    return new User(rows[0]);
+    const u = new User(rows[0]);
+    if(u.password !== password){
+      throw new CustomError(ERROR.UNEXISTENT)
+    }
+    return u
   }else{
     throw new CustomError(ERROR.UNEXISTENT)
   }
 }
 
-async function db_getUserByID(id) {
+export async function db_getUserByID(id) {
   if (!id) return;
 
   try {

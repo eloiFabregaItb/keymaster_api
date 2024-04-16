@@ -7,6 +7,7 @@ import {sanitizeUsrPic} from "./utils/sanitize.js"
 //routes
 import router_auth from "./routes/auth/auth.js"
 import router_user from "./routes/user/user.js"
+import router_notifications from "./routes/notifications/notifications.js"
 
 
 //middleware
@@ -36,6 +37,7 @@ app.use(requestManager())
 //ENDPOINTS
 app.use("/auth",router_auth)
 app.use("/user",router_user)
+app.use("/notifications",router_notifications)
 
 
 
