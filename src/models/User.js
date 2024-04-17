@@ -2,6 +2,8 @@ import { BACKEND_URL } from "../constants.js"
 import { jwtSign } from "../utils/jwt.js"
 import {db_getFriends} from "../db/db_friendships.js"
 import {db_getNotifications} from "../db/db_notifications.js"
+import { db_getFollowers } from "../db/db_friendships.js"
+import { isUserOnline } from "../ws/ws.js"
 
 
 export class User {
@@ -31,6 +33,10 @@ export class User {
     this.friends = await db_getFriends(this)
   }
 
+  async getFollowers(){
+    this.followers = await db_getFollowers(this)
+  }
+
   async getNotifications(){
     this.notifications = await db_getNotifications(this,true)
   }
@@ -43,8 +49,11 @@ export class User {
       email:this.email,
       username:this.username,
       profileImg:this.profileImg ? `${BACKEND_URL}/public/usrPic/${this.profileImg}`:null,
-      emailVerified:this.emailVerified
+      emailVerified:this.emailVerified,
+      online:isUserOnline(this)
     }
+
+    
 
     if(this.jwt){
       result.jwt=this.jwt
@@ -52,6 +61,10 @@ export class User {
 
     if(this.friends){
       result.friends = this.friends.map(x=>x.publicData())
+    }
+
+    if(this.followers){
+      result.followers = this.followers.map(x=>x.publicData())
     }
 
     if(this.notifications){

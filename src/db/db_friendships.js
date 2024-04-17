@@ -68,3 +68,21 @@ export async function db_getFriends(user){
 
 
 }
+
+
+
+export async function db_getFollowers(user){
+  const [data] = await db.query(
+    `SELECT u.*
+    FROM User u
+    INNER JOIN Friendship f ON u.id = f.friend_id
+    WHERE f.user_id = ?;`,
+    [user.id]
+  );
+
+  const users = data.map(x=>new User(x))
+
+  return users
+
+
+}

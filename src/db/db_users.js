@@ -5,13 +5,17 @@ import { CustomError, ERROR } from "../utils/requestManager.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secretJWT";
 
-export async function db_getUserByJWT(token) {
+
+export function unzipJWT(token){
   if (!token) return;
   const userData = jwt.verify(token, JWT_SECRET);
+  return userData
+}
 
-  // console.log(userData)
+export async function db_getUserByJWT(token) {
+  if (!token) return;
 
-  const { usr_id, iat, exp } = userData
+  const { usr_id, iat, exp } = unzipJWT(token)
   // console.log(new Date(iat * 1000))
   // console.log(new Date(exp * 1000))
   return await db_getUserByID(usr_id);

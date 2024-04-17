@@ -1,5 +1,7 @@
 //modules
 import express from "express"
+import { Server as WSS } from "socket.io";
+import http from "http"
 
 import "./testing.js"
 import {sanitizeUsrPic} from "./utils/sanitize.js"
@@ -14,12 +16,17 @@ import router_notifications from "./routes/notifications/notifications.js"
 import { ERROR, requestManager, sendResBAD } from "./utils/requestManager.js"
 import { limiter } from "./middleware/rateLimiter.js"
 import cors from "cors"
+import { ws } from "./ws/ws.js";
 
 
 
 //VARIABLES
 const PORT = process.env.PORT || 3000
 const app = express()
+const server = http.createServer(app);
+const io = new WSS(server);
+
+ws(io)
 
 
 sanitizeUsrPic()
@@ -47,6 +54,6 @@ app.use("*",(req,res)=>{
 })
 
 //SERVER
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

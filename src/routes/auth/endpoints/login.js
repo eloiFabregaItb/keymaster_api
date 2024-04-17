@@ -30,6 +30,9 @@ router.post("/login", tryCatch(async (req, res) => {
   const user = await db_getUserByPassword(login, pswdHash);
 
   await user.getNotifications()
+  await user.getFriends()
+  await user.getFollowers()
+  
 
   //si no hay resultados
   if (!user) {
