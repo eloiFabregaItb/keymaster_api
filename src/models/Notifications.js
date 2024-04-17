@@ -12,12 +12,14 @@ export class Notification{
     type,
     extra,
     created_at,
-    seen
+    seen,
+    target
   }){
     this.id = notification_id
     this.userId = user_id
     this.type = type
     this.extra = extra
+    this.target = target
     this.createdAt = created_at
     this.seen = Boolean(seen)
 
@@ -26,7 +28,7 @@ export class Notification{
   async init(){
 
     if(this.type === NOTIFICATIONS_TYPES.FOLLOW) {
-      const targetUser = await db_getUserByID(this.extra)
+      const targetUser = await db_getUserByID(this.target)
       this.target = targetUser.publicData()
 
       this.msg = targetUser.username + " te ha empezado a seguir"

@@ -82,11 +82,19 @@ export async function db_createUser(username, email, password, returnUser=false)
 }
 
 export async function db_deleteUser(id) {
-  const [rows] = await db.query("DELETE FROM User WHERE id = ?", [id]);
-  
-  if(rows.affectedRows == 0){
-    throw new CustomError(ERROR.UNEXISTENT,"No existe el id")
+  console.log("DELETE USER id",id)
+
+  try{
+
+    const [rows] = await db.query("DELETE FROM User WHERE id = ?", [id]);
+    
+    if(rows.affectedRows == 0){
+      throw new CustomError(ERROR.UNEXISTENT,"No existe el id")
+    }
+  }catch(err){
+    console.log(err)
   }
+  
 
 }
 

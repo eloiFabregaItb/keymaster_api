@@ -17,8 +17,9 @@ export async function db_follow(user, friend){
     [user.id, friend.id]
   )
 
+
   await db.query(
-    `INSERT INTO Notifications (user_id, type, extra) VALUES (?, ?, ?);`,
+    `INSERT INTO Notifications (user_id, type, target) VALUES (?, ?, ?);`,
     [friend.id, NOTIFICATIONS_TYPES.FOLLOW, user.id]
   );
 
@@ -39,7 +40,7 @@ export async function db_unfollow(user, friend) {
 
 
   await db.query(
-    `DELETE FROM Notifications WHERE user_id = ? AND type = ? AND extra = ?;`,
+    `DELETE FROM Notifications WHERE user_id = ? AND type = ? AND target = ?;`,
     [friend.id, NOTIFICATIONS_TYPES.FOLLOW, user.id]
   );
 

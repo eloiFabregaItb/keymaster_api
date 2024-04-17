@@ -33,10 +33,13 @@ router.get("/confirmdelete", tryCatch(async (req,res)=>{
   }
 
   const user = await db_getUserByUsername(email);
-
+  
   if (!user) {
     throw new CustomError(ERROR.NOT_FOUND, "User not found")
   }
+  
+  console.log("DELETING USER ",user.username)
+
   const check = codeWaiting.check(code,user)
 
   if(check){
@@ -59,10 +62,12 @@ router.post("/confirmdelete", tryCatch(async (req,res)=>{
   if (!user) {
     throw new CustomError(ERROR.NOT_FOUND, "User not found")
   }
+  console.log("DELETING USER ",user.username)
+
   const check = codeWaiting.check(code,user)
 
   if(check){
-    db_deleteUser(user.id)
+    await db_deleteUser(user.id)
   }
 
 

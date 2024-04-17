@@ -24,6 +24,7 @@ export default class CodeVerificationList{
       timestamp:new Date().getTime()
     }
 
+    console.log("CODE GENERATED",code)
     this.list.push(obj)
 
     return obj
