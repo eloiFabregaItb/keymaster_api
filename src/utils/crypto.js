@@ -1,10 +1,11 @@
 
 import crypto from "crypto"
+export const CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+export const CHARSET_UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 
 // Function to hash a password with a salt
 export function hashPassword(password) {
-  return password
   
   const salt = process.env.PASSWORD_SALT || "splitmeet_salt"
   const iterations = 10000;
@@ -24,19 +25,18 @@ export function generateSalt() {
 
 
 
-export function generateAlphaNumeric(length = 8){
-  const characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+export function generateAlphaNumeric(length = 8,charset=CHARSET){
 
   const codeArray = Array.from({ length }, () => {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    return characters[randomIndex];
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    return charset[randomIndex];
   });
 
   return codeArray.join("");
   
 }
 
-export function generateAlphaNumericNonRepeated(length=8,existingCodes=[],codeGetter=undefined,trysAddChar=-1){
+export function generateAlphaNumericNonRepeated(length=8,existingCodes=[],codeGetter=undefined,trysAddChar=-1,charset=CHARSET){
   let chars = length
   let code;
   let count = 0
@@ -58,7 +58,7 @@ export function generateAlphaNumericNonRepeated(length=8,existingCodes=[],codeGe
         chars ++
       }
     }
-    code = generateAlphaNumeric(chars)
+    code = generateAlphaNumeric(chars,charset)
   } while (checkIfExists(code))
   return code;
 }

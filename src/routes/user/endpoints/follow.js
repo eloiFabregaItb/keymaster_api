@@ -3,7 +3,7 @@ import express from "express";
 import { jwtVerify } from "../../../utils/jwt.js";
 import { tryCatch } from "../../../middleware/tryCatch.js";
 import { db_getUserByUsername } from "../../../db/db_users.js";
-import { db_follow, db_unfollow } from "../../../db/db_friendships.js";
+import { db_follow, db_getFollowers, db_getFriends, db_unfollow } from "../../../db/db_friendships.js";
 import { db_getUserByID } from "../../../db/db_users.js";
 import { CustomError } from "../../../utils/requestManager.js";
 import { ERROR } from "../../../utils/requestManager.js";
@@ -30,6 +30,14 @@ router.post('/follow',jwtVerify, tryCatch(async (req, res) => {
     return false
   }
 
+  const friends = await db_getFriends(req.user)
+  const followers = await db_getFollowers(req.user)
+ 
+  return {
+    friends:friends.map(u=>u.publicData()),
+    followers:followers.map(u=>u.publicData()),
+  }
+
 }))
 
 
@@ -45,6 +53,13 @@ router.post('/unfollow',jwtVerify, tryCatch(async (req, res) => {
   const data = await  db_unfollow(req.user,target)
   if(data.affectedRows === 0){
     return false
+  }
+
+  const friends = await db_getFriends(req.user)
+  const followers = await db_getFollowers(req.user)
+  return {
+    friends:friends.map(u=>u.publicData()),
+    followers:followers.map(u=>u.publicData()),
   }
 
 }))

@@ -54,17 +54,20 @@ router.post("/register", tryCatch(async (req,res)=>{
 router.get("/validate", tryCatch( async (req,res)=>{
   const {code,email} = req.query
 
+  
   if(!code || !email){
     throw new CustomError(ERROR.CREDENTIALS)
   }
-
+  
   const user = await db_getUserByUsername(email);
-
+  
   if (!user) {
     throw new CustomError(ERROR.NOT_FOUND, "User not found")
   }
-
+  
   const check = codeWaiting.check(code,user)
+  
+  console.log("VALIDATE")
 
   if(check){
     db_updateUserEmailValidated(user)

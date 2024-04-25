@@ -68,9 +68,21 @@
     <input id="input" autocomplete="off" /><button>Send</button>
   </form>
 
+  <p>
+    <button onclick="createGame()">CREATE GAME</button>
+  </p>
+  <p>
+    <input type="text" id="codeJoin">
+    <button onclick="joinGame()">JOIN GAME</button>
+  </p>
+
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3JfaWQiOjI5LCJpYXQiOjE3MTMzNjEyNDcsImV4cCI6MTcxNDM5ODA0N30.KqmnHuQxACgZlnY16OIV9yJha_Atti6Tyc8i5tTJ3nI"
+    const url = new URL(window.location.href);
+
+    const TOKEN = url.searchParams.get("token") || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3JfaWQiOjMxLCJpYXQiOjE3MTM4OTMwNTYsImV4cCI6MTcxNDkyOTg1Nn0.WVFuxfhSZ-15zFo7iuYTSQYWMFsZ9EwLnO3RtMwpWj4"
+    console.log(TOKEN)
 
 
     const socket = io('http://localhost:3000', {
@@ -101,6 +113,35 @@
     });
 
 
+
+
+    //  CREATE GAME
+
+    function createGame() {
+      console.log("CREATE GAME")
+      socket.emit("NEW_GAME")
+    }
+
+
+
+    // JOIN GAME
+    function joinGame() {
+      const code = document.getElementById("codeJoin").value
+      socket.emit("JOIN_GAME", { code })
+
+    }
+
+    socket.on("GAME_CREATED", (data) => console.log("GAME_CREATED", data))
+    socket.on("GAME_USER_JOINED", (data) => console.log("GAME_USER_JOINED", data))
+    socket.on("GAME_NOT_FOUND", (data) => console.log("GAME_NOT_FOUND", data))
+    socket.on("GAME_NOT_RECLUTING", (data) => console.log("GAME_NOT_RECLUTING", data))
+    socket.on("GAME_ALREADY_JOINED", (data) => console.log("GAME_ALREADY_JOINED", data))
+    socket.on("GAME_USER_BANNED", (data) => console.log("GAME_USER_BANNED", data))
+    socket.on("TEST", (data) => console.log("TEST", data))
+
+    socket.on("WELCOME", data => console.log("WELCOME", data))
+    socket.on("LOGIN", data => console.log("LOGIN", data))
+    socket.on("LOGOUT", data => console.log("LOGOUT", data))
 
   </script>
 </body>

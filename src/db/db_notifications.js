@@ -4,14 +4,25 @@
 import db from "./db.js";
 import { User } from "../models/User.js";
 import { CustomError, ERROR } from "../utils/requestManager.js";
-import { Notification } from "../models/Notifications.js";
+import { Notification, NOTIFICATIONS_TYPES } from "../models/Notifications.js";
 
 
 
 export async function db_getNotifications(user,onlyUnseen = false){
 
+  const notifications = []
   if(!(user instanceof User)){
     throw new CustomError(ERROR.MISSING_DATA)
+  }
+
+  if(!user.isEmailVerified()){
+    const n = new Notification({
+      userId:user.id,
+      type:NOTIFICATIONS_TYPES.EMAIL_NO_VERIFIED,
+      warn:true
+    })
+    await n.init()
+    notifications.push(n)
   }
 
   const sql = onlyUnseen 
@@ -20,14 +31,14 @@ export async function db_getNotifications(user,onlyUnseen = false){
 
   const [data] = await db.query(sql,[user.id])
 
-  const notifications = await Promise.all(
+  const notificationsDB = await Promise.all(
     data.map( async x=>{
       const n = new Notification(x)
       await n.init();
       return n
     })
   )
-  return notifications
+  return [...notifications,...notificationsDB]
 }
 
 

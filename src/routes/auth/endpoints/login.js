@@ -4,6 +4,7 @@ import { db_getUserByPassword } from "../../../db/db_users.js";
 import { jwtVerify } from "../../../utils/jwt.js";
 import { hashPassword } from "../../../utils/crypto.js";
 import { tryCatch } from "../../../middleware/tryCatch.js";
+import { notifyFriendsOfMyLogin } from "../../../ws/ws.js";
 
 const router = express.Router();
 export default router;
@@ -12,6 +13,13 @@ export default router;
 router.post("/loginjwt", jwtVerify, async (req, res) => {
   // Create token
   req.user.signJWT();
+
+  const user = req.user
+
+  await user.getNotifications()
+  await user.getFriends()
+  await user.getFollowers()
+
 
   //retornar un success
   return res.json({ success: true, ...req.user.publicData() });
@@ -33,7 +41,6 @@ router.post("/login", tryCatch(async (req, res) => {
   await user.getFriends()
   await user.getFollowers()
   
-
   //si no hay resultados
   if (!user) {
     // No user found, send a response with success:false

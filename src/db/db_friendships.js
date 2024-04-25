@@ -49,41 +49,84 @@ export async function db_unfollow(user, friend) {
   return data;
 }
 
-
-
 export async function db_getFriends(user){
   const [data] = await db.query(
-    `SELECT *
-    FROM User
-    WHERE id IN (
+    `SELECT U.*, 
+      CASE WHEN F1.friend_id IS NOT NULL THEN TRUE ELSE FALSE END AS following,
+      CASE WHEN F2.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS followed_by
+    FROM User U
+    LEFT JOIN Friendship F1 ON U.id = F1.user_id AND F1.friend_id = ?
+    LEFT JOIN Friendship F2 ON U.id = F2.friend_id AND F2.user_id = ?
+    WHERE U.id IN (
         SELECT friend_id
         FROM Friendship
         WHERE user_id = ?
     );`,
-    [user.id]
+    [user.id, user.id, user.id]
   );
 
-  const users = data.map(x=>new User(x))
+  const users = data.map(x => new User(x));
 
-  return users
-
-
+  return users;
 }
-
-
 
 export async function db_getFollowers(user){
   const [data] = await db.query(
-    `SELECT u.*
-    FROM User u
-    INNER JOIN Friendship f ON u.id = f.friend_id
-    WHERE f.user_id = ?;`,
-    [user.id]
+    `SELECT U.*, 
+      CASE WHEN F1.friend_id IS NOT NULL THEN TRUE ELSE FALSE END AS following,
+      CASE WHEN F2.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS followed_by
+    FROM User U
+    LEFT JOIN Friendship F1 ON U.id = F1.user_id AND F1.friend_id = ?
+    LEFT JOIN Friendship F2 ON U.id = F2.friend_id AND F2.user_id = ?
+    WHERE U.id IN (
+        SELECT user_id
+        FROM Friendship
+        WHERE friend_id = ?
+    );`,
+    [user.id, user.id, user.id]
   );
 
-  const users = data.map(x=>new User(x))
+  const users = data.map(x => new User(x));
 
-  return users
-
-
+  return users;
 }
+
+// export async function db_getFriends(user){
+//   const [data] = await db.query(
+//     `SELECT *
+//     FROM User
+//     WHERE id IN (
+//         SELECT friend_id
+//         FROM Friendship
+//         WHERE user_id = ?
+//     );`,
+//     [user.id]
+//   );
+
+//   const users = data.map(x=>new User(x))
+
+//   return users
+
+
+// }
+
+
+
+// export async function db_getFollowers(user){
+//   const [data] = await db.query(
+//     `SELECT *
+//     FROM User
+//     WHERE id IN (
+//         SELECT user_id
+//         FROM Friendship
+//         WHERE friend_id = ?
+//     );`,
+//     [user.id]
+//   );
+
+//   const users = data.map(x=>new User(x))
+
+//   return users
+
+
+// }

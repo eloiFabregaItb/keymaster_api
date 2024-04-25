@@ -7,6 +7,7 @@ import { sendEmailDeleteAccountConfirmation } from "../../../mailer/emailDeleteA
 import { db_deleteUser, db_getUserByUsername } from "../../../db/db_users.js";
 import { obfuscateEmail } from "../../../utils/obfuscate.js";
 import { FRONTEND_URL } from "../../../constants.js";
+import { CustomError, ERROR } from "../../../utils/requestManager.js";
 
 const router = express.Router();
 export default router;
@@ -26,51 +27,37 @@ router.post("/delete", jwtVerify, tryCatch(async (req, res) => {
 }));
 
 
-router.get("/confirmdelete", tryCatch(async (req,res)=>{
-  const {code,email} = req.query
-  if(!code || !email){
-    throw new CustomError(ERROR.CREDENTIALS)
+router.all("/confirmdelete", tryCatch(async (req,res)=>{
+
+  let user,code_
+  if (req.method === 'GET') {
+    const {code,email} = req.requireBodyData(["code","email"])
+    user = await db_getUserByUsername(email,true)
+    code_ = code
+  }else if(req.method === 'POST'){
+    const {code,login} = req.requireBodyData(["code","login"])
+    user = await db_getUserByUsername(login)
+    code_ = code
+  }else{
+    throw new CustomError(ERROR)
   }
 
-  const user = await db_getUserByUsername(email);
-  
-  if (!user) {
-    throw new CustomError(ERROR.NOT_FOUND, "User not found")
-  }
-  
-  console.log("DELETING USER ",user.username)
 
-  const check = codeWaiting.check(code,user)
+  const check = codeWaiting.check(code_,user)
 
   if(check){
-    db_deleteUser(user.id)
-  }
-
-  res.redirect(FRONTEND_URL);
-
-}))
-
-
-router.post("/confirmdelete", tryCatch(async (req,res)=>{
-  const {code,login} = req.requireBodyData(["code","login"])
-  if(!code || !login){
-    throw new CustomError(ERROR.CREDENTIALS)
-  }
-
-  const user = await db_getUserByUsername(login);
-
-  if (!user) {
-    throw new CustomError(ERROR.NOT_FOUND, "User not found")
-  }
-  console.log("DELETING USER ",user.username)
-
-  const check = codeWaiting.check(code,user)
-
-  if(check){
+    console.logº("DELETING USER 2",user.username)
     await db_deleteUser(user.id)
+  }else{
+    throw new CustomError(ERROR.CREDENTIALS,"Código incorrecto")
   }
 
+  if(req.method === 'GET'){
+
+    res.redirect(FRONTEND_URL);
+  }
 
 }))
+
 
 

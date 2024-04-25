@@ -10,6 +10,7 @@ import {sanitizeUsrPic} from "./utils/sanitize.js"
 import router_auth from "./routes/auth/auth.js"
 import router_user from "./routes/user/user.js"
 import router_notifications from "./routes/notifications/notifications.js"
+import router_play from "./routes/play/play.js"
 
 
 //middleware
@@ -24,7 +25,14 @@ import { ws } from "./ws/ws.js";
 const PORT = process.env.PORT || 3000
 const app = express()
 const server = http.createServer(app);
-const io = new WSS(server);
+const io = new WSS(server,{
+  cors:{
+    origin:"*"
+  }
+});
+
+
+app.disable('x-powered-by')
 
 ws(io)
 
@@ -45,6 +53,7 @@ app.use(requestManager())
 app.use("/auth",router_auth)
 app.use("/user",router_user)
 app.use("/notifications",router_notifications)
+app.use("/play",router_play)
 
 
 

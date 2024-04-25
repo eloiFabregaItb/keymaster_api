@@ -7,6 +7,10 @@ import { isUserOnline } from "../ws/ws.js"
 
 
 export class User {
+  #password
+  #createdAt
+  #updatedAt
+  #emailVerified
   constructor({
     id,
     password,
@@ -16,18 +20,35 @@ export class User {
     createdAt,
     updatedAt,
     emailVerified,
+    following,
+    followed_by
   }) {
     this.id = id
-    this.password = password //private
+    this.#password = password //private
     this.email = email
     this.username = username
     this.profileImg = profileImg
-    this.createdAt = createdAt //private
-    this.updatedAt = updatedAt //private
-    this.emailVerified =Boolean(emailVerified)
+    this.#createdAt = createdAt //private
+    this.#updatedAt = updatedAt //private
+    this.#emailVerified =Boolean(emailVerified) //private
+
+    //optionals
+    this.following = following !== undefined ? Boolean(following) : following
+    this.followedBy = followed_by !== undefined ? Boolean(followed_by) : followed_by
   }
 
 
+  comparePswd(pswd){
+    return this.#password === pswd
+  }
+
+  setSocket (socket){
+    this.socket = socket
+  }
+
+  isEmailVerified(){
+    return this.#emailVerified
+  }
 
   async getFriends(){
     this.friends = await db_getFriends(this)
@@ -49,15 +70,16 @@ export class User {
       email:this.email,
       username:this.username,
       profileImg:this.profileImg ? `${BACKEND_URL}/public/usrPic/${this.profileImg}`:null,
-      emailVerified:this.emailVerified,
+      emailVerified:this.#emailVerified,
       online:isUserOnline(this)
     }
 
-    
+    // OPTIONAL DATA
 
-    if(this.jwt){
-      result.jwt=this.jwt
-    }
+    if(this.following !== undefined) result.following = this.following
+    if(this.followedBy !== undefined) result.followedBy = this.followedBy
+    
+    if(this.jwt) result.jwt=this.jwt
 
     if(this.friends){
       result.friends = this.friends.map(x=>x.publicData())

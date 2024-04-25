@@ -5,6 +5,7 @@ import { tryCatch } from "../../../middleware/tryCatch.js";
 import { makeUploader } from "../../../middleware/upload.js";
 import bodyParser from "body-parser";
 import { db_updateUserImg } from "../../../db/db_users.js";
+import { BACKEND_URL } from "../../../constants.js";
 
 const router = express.Router();
 export default router;
@@ -33,5 +34,11 @@ router.post('/editimg',jwtVerify, makeUploader("image","usrPic/"),bodyParser.url
 
   db_updateUserImg(req.user,req.uploadMetadata.filename)
 
-  console.log("IMG", req.user)
+  const url = `${BACKEND_URL}/public/usrPic/${req.uploadMetadata.filename}`
+
+  console.log("IMG", req.user.username, url)
+  return {
+    url
+  }
+
 }))

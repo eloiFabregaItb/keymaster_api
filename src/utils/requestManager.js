@@ -7,6 +7,11 @@ export const ERROR={
     code:400,
     error:"MISSING_DATA"
   },
+  METHOD_NOT_ALLOWED:{
+    msg:"Method not allowed",
+    code:404,
+    error:"METHOD_NOT_ALLOWED"
+  },
   ALREADY_DONE:{
     msg:"Esta acción ya se ha realizado",
     code:400,
