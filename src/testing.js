@@ -1,8 +1,11 @@
 import db from "./db/db.js";
+import fs from "fs"
 import { db_getUserByUsername } from "./db/db_users.js";
 import { sendEmailRecoverPassword } from "./mailer/emailRecoverPassword.js";
 import { sendEmail } from "./mailer/mailer.js";
 import { hashPassword } from "./utils/crypto.js";
+import { lorem } from "./assets/lorem.js";
+import { shuffle } from "./utils/array.js";
 
 
 
@@ -91,3 +94,72 @@ import { hashPassword } from "./utils/crypto.js";
 
 const response = await db.query(`Update Notifications SET seen = 0`)
 // console.log(response)
+
+
+
+
+// ------------------------ TEXTS -------------------------------------
+
+// const jsonData = fs.readFileSync("./src/assets/elCrimenYElCastigo.json", "utf8");
+// const book = JSON.parse(jsonData);
+// shuffle(book)
+
+// const category = "book"
+// const language = "ES"
+// const author ="Fiódor Dostoyevski"
+// const title = "Crimen y castigo"
+// for (const text of book) {
+//   // console.log(text)
+//   await db.query(`INSERT INTO TextStorage (text,length,words,category,language,author,title) VALUES 
+//     (?,?,?,?,?,?,?)`,
+//     [text,text.length,text.split(" ").length,category,language,author,title]
+//   )
+// }
+
+
+
+//////////// PARSE TEXTS ////////////////
+
+// const filename = "./src/assets/elCrimenYElCastigo.txt"
+// const outputFilename = "./src/assets/elCrimenYElCastigo.json";
+
+// fs.readFile(filename, 'utf8', function(err, data) {
+//   if (err) throw err;
+  
+//   const max = 250
+//   const min = 80
+  
+
+//   const lines = data.split("\n")
+//   const result = []
+//   let buffer = ""
+
+//   for(let i=0;i<lines.length;i++){
+//     const current = lines[i]
+    
+//     if(current.length > max) continue
+
+//     buffer = current
+
+//     while (i + 1 < lines.length && buffer.length + 1 + lines[i + 1].length <= max) {
+//       buffer += " " + lines[i + 1]
+//       i++
+//     }
+
+//     if (buffer.length >= min && buffer.length <= max) {
+//       result.push(buffer);
+//     }
+
+//   }
+
+//   // console.log(result.sort((a,b)=>a.length-b.length).map(x=>x.length))
+//   // console.log(result)
+
+//   const jsonResult = JSON.stringify(result, null, 2);
+//   fs.writeFile(outputFilename, jsonResult, (writeErr) => {
+//     if (writeErr) throw writeErr;
+//     console.log(`Data written to ${outputFilename}`);
+//   });
+
+// })
+

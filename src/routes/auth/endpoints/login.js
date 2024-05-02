@@ -14,6 +14,8 @@ router.post("/loginjwt", jwtVerify, async (req, res) => {
   // Create token
   req.user.signJWT();
 
+  console.log(req.user)
+
   const user = req.user
 
   await user.getNotifications()

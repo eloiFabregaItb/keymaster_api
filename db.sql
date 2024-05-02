@@ -118,3 +118,15 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-04-25 18:35:27
+
+
+CREATE TABLE TextStorage (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  text TEXT,
+  length INT,
+  words INT,
+  category VARCHAR(50),
+  author VARCHAR(50),
+  title VARCHAR(100),
+  language VARCHAR(50)
+);
