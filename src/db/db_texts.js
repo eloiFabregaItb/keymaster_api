@@ -27,3 +27,7 @@ export async function db_getTexts(count = 50, language = undefined, category = u
   const [rows] = await db.query(query, [...queryValues, count])
   return rows
 }
+
+
+
+

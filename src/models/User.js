@@ -35,6 +35,8 @@ export class User {
     //optionals
     this.following = following !== undefined ? Boolean(following) : following
     this.followedBy = followed_by !== undefined ? Boolean(followed_by) : followed_by
+
+    this.history=[]
   }
 
 
@@ -60,6 +62,11 @@ export class User {
 
   async getNotifications(){
     this.notifications = await db_getNotifications(this,true)
+  }
+
+
+  pushHistory(x){
+    this.history.push(x)
   }
 
   //esta funcion se llama en las respuestas para mandar
