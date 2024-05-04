@@ -4,7 +4,6 @@ import { db_getUserByUsername } from "./db/db_users.js";
 import { sendEmailRecoverPassword } from "./mailer/emailRecoverPassword.js";
 import { sendEmail } from "./mailer/mailer.js";
 import { hashPassword } from "./utils/crypto.js";
-import { lorem } from "./assets/lorem.js";
 import { shuffle } from "./utils/array.js";
 
 
@@ -92,7 +91,7 @@ import { shuffle } from "./utils/array.js";
 
 
 
-const response = await db.query(`Update Notifications SET seen = 0`)
+// const response = await db.query(`Update Notifications SET seen = 0`)
 // console.log(response)
 
 
@@ -103,6 +102,7 @@ const response = await db.query(`Update Notifications SET seen = 0`)
 // const jsonData = fs.readFileSync("./src/assets/elCrimenYElCastigo.json", "utf8");
 // const book = JSON.parse(jsonData);
 // shuffle(book)
+// console.log(book)
 
 // const category = "book"
 // const language = "ES"
@@ -120,8 +120,8 @@ const response = await db.query(`Update Notifications SET seen = 0`)
 
 //////////// PARSE TEXTS ////////////////
 
-// const filename = "./src/assets/elCrimenYElCastigo.txt"
-// const outputFilename = "./src/assets/elCrimenYElCastigo.json";
+// const filename = "./src/assets/lorem.txt"
+// const outputFilename = "./src/assets/lorem.json";
 
 // fs.readFile(filename, 'utf8', function(err, data) {
 //   if (err) throw err;
