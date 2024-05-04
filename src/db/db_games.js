@@ -30,44 +30,71 @@ export async function db_saveGame(user, textId, time, wpm, errors){
 }
 
 
-export async function db_getRanking(max = 10){
+export async function db_getHistory(user){
+  const [rows] = await db.query(`
+    SELECT TextStorage.*, GameHistory.*
+    FROM GameHistory
+    INNER JOIN TextStorage 
+    ON GameHistory.text_id = TextStorage.id
+    WHERE GameHistory.user_id = ?
+    ORDER BY GameHistory.created_at DESC;
+    `,[user.id]
+  )
+
+  const history = rows.map(x=>new GameHistory(x))
+
+
+  return history
+}
+
+
+export async function db_getRankingUsers(max = 10){
 
   //TODO dont untie for error, instead for error% (must do subquery to TextStorage and divide the totalErrors by length)
 
   const query = `
-  WITH TopUsers AS (
-    SELECT user_id, MAX(wpm) AS max_wpm, MIN(JSON_LENGTH(errors)) AS min_errors
+  WITH RankedGames AS (
+    SELECT GameHistory.*,
+           ROW_NUMBER() OVER (
+               PARTITION BY GameHistory.user_id
+               ORDER BY GameHistory.wpm DESC, GameHistory.totalErrors ASC
+           ) AS user_rank
     FROM GameHistory
-    GROUP BY user_id
-    ORDER BY max_wpm DESC, min_errors ASC
-    LIMIT ?
   )
-  
-  SELECT  User.*, GameHistory.*
-  FROM GameHistory
-  INNER JOIN TopUsers ON GameHistory.user_id = TopUsers.user_id
-  INNER JOIN User ON GameHistory.user_id = User.id
-  ORDER BY TopUsers.max_wpm DESC, TopUsers.min_errors ASC, GameHistory.created_at DESC;
+  SELECT
+    RankedGames.*,
+    User.*,
+    TextStorage.*
+  FROM RankedGames
+  JOIN User
+    ON RankedGames.user_id = User.id
+  JOIN TextStorage
+    ON RankedGames.text_id = TextStorage.id
+  WHERE RankedGames.user_rank = 1
+  ORDER BY RankedGames.wpm DESC, RankedGames.totalErrors ASC
+  LIMIT ?
+
   `
 
   const users = []
   const [ranking] = await db.query(query,[max])
 
-  console.log(ranking)
-
   for (const rank of ranking) {
-    let u = users.find(x=>x.id === rank.user_id)
-    if(!u){
-      u = new User({...rank, id:rank.user_id})
+    const u = new User({...rank, id:rank.user_id})
+    // let u = users.find(x=>x.id === rank.user_id)
+    // if(!u){
+    //   u = new User({...rank, id:rank.user_id})
       users.push(u)
-    }
+    // }
     const r = new GameHistory(rank)
     u.pushHistory(r)
   }
 
-  console.log(users)
+  return users
 
 }
+
+
 
 
 

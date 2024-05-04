@@ -100,6 +100,10 @@ export class User {
       result.notifications = this.notifications.map(x=>x.publicData())
     }
 
+    if(this.history){
+      result.history = this.history
+    }
+
     return result
   }
 
