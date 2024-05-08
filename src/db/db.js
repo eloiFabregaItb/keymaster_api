@@ -3,10 +3,10 @@ import mysql from "mysql2"
 
 //DATABASE CONNECTION
 const db_pool = mysql.createPool({
-    host: "localhost",//process.env.DB_URL || "localhost",
-    user: "keymaster_user",//process.env.DB_USER || "root",
-    password: "masterKey",//process.env.DB_PASS || "1234",
-    database: "keymaster",//process.env.DB_DATABASE || "splitmeet",
+    host: process.env.DB_URL || "localhost",
+    user: process.env.DB_USER || "keymaster_user",
+    password: process.env.DB_PASS || "masterKey",
+    database: process.env.DB_DATABASE || "keymaster",
     port: process.env.DB_PORT || 3306
 });
 
@@ -41,14 +41,3 @@ export default db
 
 
 */
-
-try{
-
-  const [rows,fields] = await db.query(
-    "SELECT * FROM User",
-  )
-
-  console.log("ROWS",rows)
-}catch(err){
-  console.log(err)
-}

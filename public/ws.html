@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Socket.IO chat</title>
+  <style>
+    body {
+      margin: 0;
+      padding-bottom: 3rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    #form {
+      background: rgba(0, 0, 0, 0.15);
+      padding: 0.25rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      height: 3rem;
+      box-sizing: border-box;
+      backdrop-filter: blur(10px);
+    }
+
+    #input {
+      border: none;
+      padding: 0 1rem;
+      flex-grow: 1;
+      border-radius: 2rem;
+      margin: 0.25rem;
+    }
+
+    #input:focus {
+      outline: none;
+    }
+
+    #form>button {
+      background: #333;
+      border: none;
+      padding: 0 1rem;
+      margin: 0.25rem;
+      border-radius: 3px;
+      outline: none;
+      color: #fff;
+    }
+
+    #messages {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #messages>li {
+      padding: 0.5rem 1rem;
+    }
+
+    #messages>li:nth-child(odd) {
+      background: #efefef;
+    }
+  </style>
+</head>
+
+<body>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" /><button>Send</button>
+  </form>
+
+  <p>
+    <button onclick="createGame()">CREATE GAME</button>
+  </p>
+  <p>
+    <input type="text" id="codeJoin">
+    <button onclick="joinGame()">JOIN GAME</button>
+  </p>
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const url = new URL(window.location.href);
+
+    const TOKEN = url.searchParams.get("token") || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3JfaWQiOjMxLCJpYXQiOjE3MTM4OTMwNTYsImV4cCI6MTcxNDkyOTg1Nn0.WVFuxfhSZ-15zFo7iuYTSQYWMFsZ9EwLnO3RtMwpWj4"
+    console.log(TOKEN)
+
+
+    const socket = io('http://localhost:3000', {
+      transports: ['websocket'],
+      auth: {
+        token: TOKEN,
+      },
+    });
+
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('chat message', { msg: input.value, token: TOKEN });
+        input.value = '';
+      }
+    });
+
+    socket.on('chat message', (msg) => {
+      const item = document.createElement('li');
+      item.textContent = msg;
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+
+
+
+    //  CREATE GAME
+
+    function createGame() {
+      console.log("CREATE GAME")
+      socket.emit("NEW_GAME")
+    }
+
+
+
+    // JOIN GAME
+    function joinGame() {
+      const code = document.getElementById("codeJoin").value
+      socket.emit("JOIN_GAME", { code })
+
+    }
+
+    socket.on("GAME_CREATED", (data) => console.log("GAME_CREATED", data))
+    socket.on("GAME_USER_JOINED", (data) => console.log("GAME_USER_JOINED", data))
+    socket.on("GAME_NOT_FOUND", (data) => console.log("GAME_NOT_FOUND", data))
+    socket.on("GAME_NOT_RECLUTING", (data) => console.log("GAME_NOT_RECLUTING", data))
+    socket.on("GAME_ALREADY_JOINED", (data) => console.log("GAME_ALREADY_JOINED", data))
+    socket.on("GAME_USER_BANNED", (data) => console.log("GAME_USER_BANNED", data))
+    socket.on("TEST", (data) => console.log("TEST", data))
+
+    socket.on("WELCOME", data => console.log("WELCOME", data))
+    socket.on("LOGIN", data => console.log("LOGIN", data))
+    socket.on("LOGOUT", data => console.log("LOGOUT", data))
+
+  </script>
+</body>
+
+</html>
