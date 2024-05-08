@@ -46,7 +46,7 @@ router.all("/confirmdelete", tryCatch(async (req,res)=>{
   const check = codeWaiting.check(code_,user)
 
   if(check){
-    console.logº("DELETING USER 2",user.username)
+    console.log("DELETING USER 2",user.username)
     await db_deleteUser(user.id)
   }else{
     throw new CustomError(ERROR.CREDENTIALS,"Código incorrecto")

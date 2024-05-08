@@ -11,6 +11,7 @@ import { ERROR } from "../utils/requestManager.js";
 
 const tempFolder = path.join('tmp')
 const publicFolder = path.join('public')
+const noTransformExtensions=[".svg",".webp"]
 
 // await fs.mkdir(tempFolder, { recursive: true }).catch((err) => {
 //   console.error('Error creating temporary folder:', err);
@@ -33,22 +34,23 @@ export function makeUploader(field, folder = 'uploads/') {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       // Check if the file is an SVG, store it directly in the public folder
-      const isSvg = path.extname(file.originalname).toLowerCase() === '.svg';
-      cb(null, isSvg ? path.join(publicFolder,folder) : tempFolder);
+      const noTransform = noTransformExtensions.includes(path.extname(file.originalname).toLowerCase());
+      cb(null, noTransform ? path.join(publicFolder,folder) : tempFolder);
     },
     filename: (req, file, cb) => {
       // Generate a unique filename for the uploaded file
       const fileExtension = path.extname(file.originalname);
       const uniqueFileId = uuidv4()
       const uniqueFilename = `${uniqueFileId}${fileExtension}`;
-      const isSvg = fileExtension.toLowerCase() === '.svg'
+      const extension = fileExtension.toLowerCase()
+      const noTransform = noTransformExtensions.includes(extension)
 
       req.uploadMetadata = {
         fileOriginalExtension: fileExtension,
         uniqueFilename: uniqueFilename,
         uniqueFileId: uniqueFileId,
-        isSvg,
-        outputFile: isSvg ? `${uniqueFileId}.svg` : `${uniqueFileId}.webp`,
+        isSvg:noTransform,
+        outputFile: noTransform? `${uniqueFileId}${extension}` : `${uniqueFileId}.webp`,
       };
 
       cb(null, uniqueFilename);

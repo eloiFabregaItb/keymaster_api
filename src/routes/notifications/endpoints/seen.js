@@ -12,8 +12,7 @@ router.post('/seen',jwtVerify, tryCatch(async (req, res) => {
 
   const {ids} = req.requireBodyData(["ids"])
 
-
-  await db_seeNotifications(req.user,ids)
+  await db_seeNotifications(req.user,ids.filter(x=>!isNaN(x)))
 
 }))
 

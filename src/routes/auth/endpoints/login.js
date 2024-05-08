@@ -14,8 +14,6 @@ router.post("/loginjwt", jwtVerify, async (req, res) => {
   // Create token
   req.user.signJWT();
 
-  console.log(req.user)
-
   const user = req.user
 
   await user.getNotifications()
@@ -32,7 +30,7 @@ router.post("/login", tryCatch(async (req, res) => {
   //comprueba que se han recibido todos los datos requeridos
   const {login,password} = req.requireBodyData(["login","password"]) //login puede ser username o correo
 
-  console.log("LOGIN",login,password);
+  console.log("LOGIN",login);
 
   // console.log("PASSWORD",usr_pass) //5c6f51c9b50b7550deeda3abc25889237972c11c28560a9ab6dd99f9dc817cb7 user3@example.com
   const pswdHash = hashPassword(password);

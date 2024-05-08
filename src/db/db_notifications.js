@@ -45,6 +45,8 @@ export async function db_getNotifications(user,onlyUnseen = false){
 
 export async function db_seeNotifications(user,ids){
 
+  if(!ids || ids.length === 0) return
+
   console.log("UPDATE",ids,user.id)
 
   if(!(user instanceof User)){

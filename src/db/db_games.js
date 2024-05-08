@@ -96,5 +96,36 @@ export async function db_getRankingUsers(max = 10){
 
 
 
+export async function db_getRankPosition(user){
+  const query = `WITH RankedGames AS (
+    SELECT GameHistory.user_id,
+           GameHistory.wpm,
+           GameHistory.totalErrors,
+           ROW_NUMBER() OVER (
+               PARTITION BY GameHistory.user_id
+               ORDER BY GameHistory.wpm DESC, GameHistory.totalErrors ASC
+           ) AS user_rank
+    FROM GameHistory
+    ORDER BY GameHistory.wpm DESC, GameHistory.totalErrors ASC
+),
+GamePosition AS (
+    SELECT RankedGames.*,
+           ROW_NUMBER() OVER (
+               ORDER BY RankedGames.wpm DESC, RankedGames.totalErrors ASC
+           ) AS overall_position
+    FROM RankedGames
+    WHERE RankedGames.user_rank = 1
+)
+SELECT overall_position
+FROM GamePosition
+WHERE GamePosition.user_id = ?
+`
+
+const [[{overall_position}]] = await db.query(query,[user.id])
+return overall_position
+}
+
+
+
 
 

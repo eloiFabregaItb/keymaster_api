@@ -14,7 +14,7 @@ router.get('/ranking', tryCatch(async (req, res) => {
 
   const users = await db_getRankingUsers()
 
-  return users
+  return users.map(x=>x.publicData())
   // return users.map(x=>x.publicData())
 
 

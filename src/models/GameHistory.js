@@ -47,8 +47,8 @@ export class GameHistory{
         char:value.c,
         err:value.e
       }
-      if(value.letter){
-        errSimp[key].letter = value.l
+      if(value.l){
+        result[key].letter = value.l
       }
     }
 
